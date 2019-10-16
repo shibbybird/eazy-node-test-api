@@ -1,0 +1,26 @@
+eazyVersion: '1.0'
+name: 'eazy-node-test-registry'
+releases:
+  - 'latest'
+  - '0.0.1'
+image: 'shibbybird/eazy-node-test-registry'
+deployment:
+  env:
+    - 'APP_ENV=integration'
+  ports:
+    - 8080
+  health:
+    - '/bin/sh'
+    - '-c'
+    - 'while ! curl http://eazy-node-test-registry:3000/health; do sleep 1; done;'
+integration:
+  bootstrap:
+    - '/bin/sh'
+    - '-c'
+    - 'mysql -h eazy-ci-mysql -u root -peazy-admin < /root/build/sql/init.sql'
+  runTest:
+    - '/bin/sh'
+    - '-c'
+    - 'npm run integration'
+  dependencies:
+    - 'github.com/shibbybird/eazy-ci-mysql'
